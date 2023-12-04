@@ -5,6 +5,7 @@ import ButtonStart from "./Button";
 import { Avatar } from "react-native-paper";
 import { useAuthContext } from "../context/AuthContext";
 import { getToken } from "../helpers";
+import * as Notifications from 'expo-notifications';
 export default function Home() {
   const { session, user } = useAuthContext();
   const handlePressHere = async () => {
@@ -71,7 +72,7 @@ export default function Home() {
           text2={"I'm coming"}
           icon2={"walk"}
           handlePressHere={handlePressHere}
-           handlePressComing={handlePressComing}
+          handlePressComing={handlePressComing}
         />
       </View>
     </View>

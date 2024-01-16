@@ -4,24 +4,32 @@
     "slug": "tikteam_project",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/home.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/Home.png",
       "resizeMode": "contain"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/Home.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.fatihazaki.tikteam_project"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2c37f94e-d728-49f1-8c43-6f9528e531d3"
+      }
     }
   }
 }

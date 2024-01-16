@@ -43,7 +43,7 @@ export default function Profil() {
         </View>
         <View style={styles.position}>
           <View style={styles.icon}>
-            <Ionicons name="call-outline" size={20} color="grey" />
+            <Ionicons name="person" size={20} color="grey" />
             <Text style={styles.NameText}> pseudoName : </Text>
           </View>
           <Text style={styles.NameText2}> {user.username}</Text>

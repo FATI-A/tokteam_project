@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, View } from "react-native";
-import { TextInput, Button, RadioButton } from "react-native-paper";
+import { TextInput, Button, RadioButton, HelperText } from "react-native-paper";
 import { useAuthContext } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/core";
 import { getToken } from "../helpers";
@@ -12,10 +12,18 @@ export default function EditProfil() {
   const [pseudoName, setPseudoName] = React.useState("");
   const [address, setAddress] = React.useState("");
   const [error, setError] = React.useState("");
+  const [emailError, setEmailError] = React.useState(false);
   // const [password, setPassword] = React.useState("");
   // const [confirmedPassword, setConfirmedPassword] = React.useState("");
 
   const [value, setValue] = React.useState("male");
+
+  const handleEmailChange = (text) => {
+    // Vérifier si l'email contient "@tokteam.com"
+    const isValidEmail = text.toLowerCase().includes("@tokteam.com");
+    setEmailError(!isValidEmail);
+    setEmail(text); // Mettre à jour l'état global si nécessaire
+  };
 
   React.useEffect(() => {
     setFirstName(user?.firstName);
@@ -122,13 +130,16 @@ export default function EditProfil() {
             <TextInput
               label="Email"
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={handleEmailChange}
               mode="outlined"
               theme={{ roundness: 10 }}
               selectionColor="#2667FF"
               activeOutlineColor="#2667FF"
               style={styles.input2}
             />
+            <HelperText type="error" visible={emailError}>
+              L'email doit contenir "@tokteam.com"
+            </HelperText>
           </View>
           <TextInput
             label="Address"
@@ -138,7 +149,7 @@ export default function EditProfil() {
             theme={{ roundness: 10 }}
             selectionColor="#2667FF"
             activeOutlineColor="#2667FF"
-            style={styles.input}
+            style={styles.address}
           />
           {/* <TextInput
           label="Password"
@@ -182,20 +193,25 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "transparent",
     width: "90%",
-    marginTop: 10,
+    marginTop: 20,
   },
   input2: {
     backgroundColor: "transparent",
   },
   email: {
     width: "90%",
-    marginTop: 10,
+    marginTop: 20,
   },
-  phone: {
+  address: {
     backgroundColor: "transparent",
-    marginTop: 10,
     width: "90%",
+    marginTop: -5,
   },
+  // phone: {
+  //   backgroundColor: "transparent",
+  //   marginTop: 10,
+  //   width: "90%",
+  // },
   button: {
     marginTop: 20,
     backgroundColor: "#2667FF",

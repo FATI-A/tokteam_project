@@ -2,10 +2,26 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Avatar } from "react-native-paper";
 import { useAuthContext } from "../context/AuthContext";
-import Barsearch from "./Barsearch";
+import { getToken } from "../helpers";
+import { parseISO, format } from "date-fns";
 
-export default function ProfilSession() {
-  const { session, loading } = useAuthContext();
+export default function ProfilSessionLooked(props) {
+  //   const { session } = useAuthContext();
+  const [sessionList, setSessionList] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [myArray, setMyArray] = React.useState([]);
+  React.useEffect(() => {
+    handleShow();
+    if (!loading) {
+      const arr = sessionList.filter(
+        (list) =>
+          changeFormatDate(props.sessionDate) ===
+          changeFormatDate(list?.attributes?.createdAt)
+      );
+      console.log("arrayray", arr);
+      setMyArray(arr);
+    }
+  }, [props, loading]);
   const isClocked = (action) => {
     if (action === "arrived") {
       return (
@@ -33,19 +49,56 @@ export default function ProfilSession() {
       );
     }
   };
-  return (
-    <>
-      {loading ? (
-        <Text> loading ....</Text>
-      ) : (
-        <>
-          <View style={styles.container}>
-            <Barsearch />
-            {session?.map((session) => {
-              return (
-                <View style={styles.flex} key={session.id}>
+
+  const handleShow = async () => {
+    try {
+      const jwt = await getToken();
+      const response = await fetch(
+        `http://192.168.1.168:1337/api/all-sessions`,
+        {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      const data = await response.json();
+      setSessionList(data.data);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
+  const changeFormatDate = (value) => {
+    try {
+      if (!value || typeof value !== "string") {
+        throw new Error("La valeur de la date n'est pas valide");
+      }
+
+      const dateObj = parseISO(value);
+      return format(dateObj, "yyyy/MM/dd HH:mm");
+    } catch (error) {
+      //   console.error("Erreur lors du formatage de la date :", error);
+      return "Erreur de formatage de la date";
+    }
+  };
+  if (myArray.length > 0) {
+    // console.log("SessionList :", sessionList[0].attributes.sessions);
+    // console.log("myarray", myArray[0]?.attributes?.sessions);
+    return (
+      <>
+        <View style={styles.container}>
+          {myArray[0]?.attributes?.sessions.map((item, index) => (
+            <>
+              {changeFormatDate(props.sessionDate) ===
+              changeFormatDate(myArray[0]?.attributes?.createdAt) ? (
+                <View style={styles.flex} key={index}>
                   <View style={styles.position}>
-                    {session.attributes.gender === "female" ? (
+                    {item.attributes.gender === "female" ? (
                       <Avatar.Image
                         size={58}
                         source={require("../assets/avatarF.jpg")}
@@ -58,21 +111,26 @@ export default function ProfilSession() {
                     )}
                     <View>
                       <Text style={styles.NameText}>
-                        {session.attributes.firstName}
-                        {session.attributes.lastName}
+                        {item.attributes.firstName}
+                        {item.attributes.lastName}
                       </Text>
-                      <Text style={styles.idText}>
-                        {session.attributes.email}
-                      </Text>
+                      <Text style={styles.idText}>{item.attributes.email}</Text>
                     </View>
                   </View>
-                  {isClocked(session.attributes.action)}
+                  {isClocked(item.attributes.action)}
                 </View>
-              );
-            })}
-          </View>
-        </>
-      )}
+              ) : null}
+            </>
+          ))}
+        </View>
+      </>
+    );
+  }
+  return (
+    <>
+      <View style={styles.contain}>
+        <Text>loading...</Text>
+      </View>
     </>
   );
 }
@@ -81,6 +139,12 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     backgroundColor: "white",
+  },
+  contain: {
+    height: "100%",
+    display: "flex",
+    marginTop: "50%",
+    alignItems: "center",
   },
   flex: {
     marginLeft: 20,

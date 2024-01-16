@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, View, Image } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView } from "react-native";
 import { TextInput, HelperText, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/core";
 import { useAuthContext } from "../context/AuthContext";
@@ -10,6 +10,8 @@ export default function Login() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const navigation = useNavigation();
+  const [emailError, setEmailError] = React.useState(false);
+  const [passwordError,setPasswordError]=React.useState(false);
   const handlePress = async () => {
     navigation.navigate("Register");
   };
@@ -33,12 +35,32 @@ export default function Login() {
           }
         );
 
+        if (!response.ok) {
+          // If response status is not ok, handle the error
+          if (response.status === 400) {
+            // Assuming 400 status code for validation errors
+            const errorData = await response.json();
+            if (errorData.message && errorData.message[0].messages) {
+              errorData.message[0].messages.forEach((error) => {
+                if (error.id === "Auth.form.error.email.provide") {
+                  setEmailError(true);
+                }
+                if (error.id === "Auth.form.error.password.provide") {
+                  setPasswordError(true);
+                }
+              });
+            }
+          }
+          throw new Error("password or email is incorrect");
+        }
+  
         const data = await response.json();
         setToken(data.jwt);
         setUser(data.user);
         navigation.navigate("Tabs");
       } catch (error) {
         console.error(error);
+       
       }
     }
   };
@@ -46,9 +68,10 @@ export default function Login() {
     navigation.navigate("PasswordForgotten");
   };
 
+
   return (
     <>
-      <View>
+      <ScrollView style={styles.contenair}>
         <View style={styles.position}>
           <Image source={require("../assets/log6.png")} style={styles.image} />
           <View style={styles.loginBox}>
@@ -56,7 +79,7 @@ export default function Login() {
               <TextInput
                 label="Email"
                 value={email}
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={(text)=>setEmail(text)}
                 mode="flat"
                 theme={{ roundness: 20 }}
                 underlineColor="#2667FF"
@@ -67,7 +90,9 @@ export default function Login() {
                 <TextInput
                   label="Password"
                   value={password}
-                  onChangeText={(text) => setPassword(text)}
+                  onChangeText={(text) => {
+                    setPassword(text);
+                  }}
                   secureTextEntry
                   right={<TextInput.Icon icon="eye" />}
                   activeUnderlineColor="#2667FF"
@@ -95,10 +120,7 @@ export default function Login() {
           </View>
           <View style={styles.register}>
             <View style={styles.positionregister}>
-              <Text style={styles.textregister}>
-                {" "}
-                Do you want to register ?{" "}
-              </Text>
+              <Text style={styles.textregister}>Do you want to register ?</Text>
               <Button
                 mode="contained"
                 onPress={handlePress}
@@ -109,21 +131,23 @@ export default function Login() {
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   );
 }
 const styles = StyleSheet.create({
+  contenair:{
+    backgroundColor: "#3F8EFC",
+  },
   position: {
     alignItems: "center",
-    backgroundColor: "#3F8EFC",
     height: "100%",
   },
   image: {
     marginRight: 40,
   },
   loginBox: {
-    height: "40%",
+    height: 300,
     backgroundColor: "rgb(244, 244, 244)",
     width: "80%",
     borderRadius: 25,
@@ -137,7 +161,7 @@ const styles = StyleSheet.create({
   },
   email: {
     width: "90%",
-    marginTop: 30,
+    marginTop: 20,
     marginLeft: 15,
   },
   textPass: {
@@ -166,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   register: {
-    height: "10%",
+    height: 80,
     backgroundColor: "rgb(244, 244, 244)",
     width: "80%",
     borderRadius: 25,
@@ -178,6 +202,7 @@ const styles = StyleSheet.create({
   positionregister: {
     flex: 1,
     flexDirection: "row",
+    justifyContent:"space-between"
   },
   textregister: {
     textAlign: "left",
@@ -188,4 +213,13 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 20,
   },
+  // error: {
+  //   textAlign: "left",
+  //   fontSize: 14,
+  //   fontStyle: "italic",
+  //   fontWeight: "bold",
+  //   color: "red",
+  //   marginTop: 30,
+  //   marginLeft: 20,
+  // },
 });

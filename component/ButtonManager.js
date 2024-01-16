@@ -4,7 +4,7 @@ import {StyleSheet } from 'react-native';
 
 const ButtonManager = (props) => (
     <>
-  <Button icon="home" mode="contained" onPress={() => console.log('Pressed')}  style={styles.button}>
+  <Button  mode="contained" onPress={props.handleAdd}  style={styles.button}>
   {props.text}
   </Button>
   </>

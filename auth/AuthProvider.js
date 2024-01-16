@@ -5,16 +5,13 @@ import { getToken } from "../helpers";
 const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [sessions,setSessions]= useState();
+  const [sessions, setSessions] = useState();
   const [loading, setLoading] = React.useState(false);
-
-  
 
   const fetchData = async () => {
     setLoading(true);
     const authToken = await getToken();
     try {
-
       const response = await fetch("http://192.168.1.168:1337/api/sessions", {
         method: "GET",
         headers: {
@@ -31,28 +28,26 @@ const AuthProvider = ({ children }) => {
       setSessions(dataJson.data);
     } catch (error) {
       console.error("Erreur API :", error);
-    
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
   const fetchLoggedInUser = async () => {
     setIsLoading(true);
-    const authToken = await  getToken();
+    const authToken = await getToken();
     try {
-    	const response = await fetch("http://192.168.1.168:1337/api/users/me", {
-    		headers: {
-    			Authorization: `Bearer ${authToken}`,
-    		},
-    	});
-    	const data = await response.json();
-    	setUserData(data);
-      console.log("user",data);
+      const response = await fetch("http://192.168.1.168:1337/api/users/me", {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const data = await response.json();
+      setUserData(data);
     } catch (error) {
-    	console.error(error);
+      console.error(error);
     } finally {
-    	setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -65,17 +60,23 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-      fetchLoggedInUser();
+    fetchLoggedInUser();
   }, []);
-  
-  useEffect(() => {
-      fetchData();
 
+  useEffect(() => {
+    fetchData();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user: userData, setUser: handleUser, isLoading, session:sessions, setSession:handleSession, loading}}
+      value={{
+        user: userData,
+        setUser: handleUser,
+        isLoading,
+        session: sessions,
+        setSession: handleSession,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>

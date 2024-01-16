@@ -6,8 +6,7 @@ import ProfilSession from "./ProfilSession";
 const Session = () => (
   <>
     <ScrollView style={styles.container}>
-    <View  style={styles.View}>
-      <Barsearch />
+    <View style={styles.View}>
       <ProfilSession/>
     </View>
     </ScrollView>

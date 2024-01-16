@@ -6,6 +6,7 @@ import { useAuthContext } from "../context/AuthContext";
 
 const Absence = (props) => {
   const { user } = useAuthContext();
+
   return (
     <>
        <TextInput

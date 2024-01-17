@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Button, DataTable } from "react-native-paper";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { useAuthContext } from "../context/AuthContext";
 import { getToken } from "../helpers";
 export const dataTableTitleStyle = {
   color: "white",
@@ -9,6 +10,7 @@ export const dataTableTitleStyle = {
 const Users = () => {
   const [users, setUsers] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
+  const { user } = useAuthContext();
 
   React.useEffect(() => {
     setLoading(true);
@@ -33,7 +35,18 @@ const Users = () => {
       setLoading(false);
     }
   };
-
+  const deleteSession = async (id) => {
+    const jwt = await getToken();
+    const filter = session.filter((item) => id === item.attributes.userId);
+    console.log("filter", filter);
+    fetch(`http://192.168.1.168:1337/api/sessions/${filter[0].id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+  };
   const handleDelete = async (id) => {
     const jwt = await getToken();
     fetch(`http://192.168.1.168:1337/api/users/${id}`, {
@@ -44,6 +57,7 @@ const Users = () => {
       },
     }).then(() => {
       fetchData();
+      deleteSession(id);
     });
   };
 

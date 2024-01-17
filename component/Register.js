@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, View, Image } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { TextInput, HelperText, Button, RadioButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/core";
@@ -99,6 +99,7 @@ export default function Register() {
     navigation.navigate("Login");
   };
   return (
+    <ScrollView style={styles.contenair}>
     <View style={styles.position}>
       <Text style={styles.text}> register</Text>
       <View style={styles.RegisterBox}>
@@ -212,13 +213,17 @@ export default function Register() {
         </View>
       </View>
     </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   position: {
     alignItems: "center",
+  
+  },
+  contenair:{
     backgroundColor: "#3F8EFC",
-    height: "100%",
+
   },
   text: {
     textAlign: "center",
